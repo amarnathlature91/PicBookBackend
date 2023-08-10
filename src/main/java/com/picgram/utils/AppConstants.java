@@ -5,14 +5,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 
-@Configurable
 public class AppConstants {
 
-    @Bean(name="entityManagerFactory")
-    public LocalSessionFactoryBean sessionFactory() {
-        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-
-        return sessionFactory;
-    }
+    public static final String[] PUBLIC_URLS = {
+            "/api/user/register/**",
+            "/api/user/login",
+            "/api/user/verify/**",
+            "/api/user/reset-password/**",
+            "/api/user/forgot-password/**"
+    };
 
 }

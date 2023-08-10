@@ -1,9 +1,7 @@
 package com.picgram.service;
 
-import com.picgram.dto.PasswordChangeDto;
-import com.picgram.dto.RegisterDto;
-import com.picgram.dto.ResetPasswordDto;
-import com.picgram.dto.UserDetailsDto;
+import com.picgram.dto.*;
+import com.picgram.model.Post;
 import com.picgram.model.User;
 import com.picgram.response.UserResponse;
 import org.springframework.stereotype.Service;
@@ -17,19 +15,24 @@ import java.util.List;
 public interface UserService {
 
     public User create(RegisterDto rdt);
+    public String login(LoginDto ld);
     public User getByEmail(String email);
     void verifyEmail(String token);
-    void deleteUser(long uid);
-    public User updateProfilePhoto(MultipartFile photo,long uid);
-    public User updateEmail(String email,long id);
-    public User updatePassword(PasswordChangeDto pdt,long uId);
-    public User updateUserDetails(UserDetailsDto udt, long uid);
-    public void followUser(long followerId,long followToId);
-    public void unFollowUser(long unFollowerId,long unFollowToId);
+    public User updateProfilePhoto(MultipartFile photo);
+    public User updateEmail(String email);
+    public User updatePassword(PasswordChangeDto pdt);
+    public User updateUserDetails(UserDetailsDto udt);
+    public void followUser(long followToId);
+    public void unFollowUser(long unFollowToId);
     public void forgotPassword(String email);
     public User resetPassword(String token, ResetPasswordDto rdt);
-
-    public List<UserResponse> getUserSearchResult(String key, Integer page, Integer size, long uId);
+    public List<UserResponse> getUserSearchResult(String key, Integer page, Integer size);
+    public List<UserResponse> getFollowerUsersPaginate(Long userId, Integer page, Integer size);
+    public List<UserResponse> getFollowingUsersPaginate(Long userId, Integer page, Integer size);
+    public  User getAuthenticatedUser();
+    public User getById(long uId);
+    public List<User> getLikesByPostPaginate(Post post, Integer page, Integer size);
+    void deleteUserAccount();
 
 
     }

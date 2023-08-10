@@ -36,7 +36,7 @@ public class EmailService {
 
     public void sendPasswordResetEmail(String email) {
         String rtoken = String.valueOf(UUID.randomUUID());
-        String url="http://localhost:8181/api/user/password/reset"+rtoken;
+        String url="http://localhost:8181/api/user/reset-password/"+rtoken;
 
         EmailVerification emvr=new EmailVerification();
         emvr.setToken(rtoken);

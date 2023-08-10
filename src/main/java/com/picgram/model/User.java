@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.action.internal.OrphanRemovalAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class User {
     private Date dateLastModified;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "follow_users",
             joinColumns = @JoinColumn(name = "followed_id"),

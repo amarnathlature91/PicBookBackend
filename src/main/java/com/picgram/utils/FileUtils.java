@@ -49,7 +49,7 @@ public class FileUtils {
             Files.delete(oldFilePath);
             Files.copy(inputStream, newFilePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new IOException("Could not update file");
+            e.printStackTrace();
         }
     }
 
