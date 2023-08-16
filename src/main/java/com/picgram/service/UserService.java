@@ -11,7 +11,6 @@ import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.List;
 
-@Service
 public interface UserService {
 
     public User create(RegisterDto rdt);
@@ -32,7 +31,6 @@ public interface UserService {
     public  User getAuthenticatedUser();
     public User getById(long uId);
     public List<User> getLikesByPostPaginate(Post post, Integer page, Integer size);
-    void deleteUserAccount();
 
 
     }

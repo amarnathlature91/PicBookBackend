@@ -12,7 +12,11 @@ public class AppConstants {
             "/api/user/login",
             "/api/user/verify/**",
             "/api/user/reset-password/**",
-            "/api/user/forgot-password/**"
+            "/api/user/forgot-password/**",
+            "/src/uploads/**",
+            "/uploads/**"
     };
+
+    public static final String TOKEN_HEADER="Jwt";
 
 }

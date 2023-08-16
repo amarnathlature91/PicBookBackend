@@ -2,13 +2,21 @@ package com.picgram.controller;
 
 import com.picgram.dto.*;
 import com.picgram.model.User;
+import com.picgram.response.PostResponse;
 import com.picgram.response.UserResponse;
+import com.picgram.security.CustomUserDetails;
+import com.picgram.security.JwtHelper;
 import com.picgram.service.EmailService;
+import com.picgram.service.PostService;
 import com.picgram.service.UserService;
+import com.picgram.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +30,12 @@ public class UserController {
 
     @Autowired
     private UserService ussr;
+    @Autowired
+    AuthenticationManager authenticationManager;
+    @Autowired
+    JwtHelper jwt;
+    @Autowired
+    private PostService psr;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterDto rdt) {
@@ -31,10 +45,26 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login( @RequestBody LoginDto ldt){
-        JwtResponse jwtResponse = new JwtResponse(ussr.login(ldt));
-        return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
+//        JwtResponse jwtResponse = new JwtResponse(ussr.login(ldt));
+//        return new ResponseEntity<>(jwtResponse, HttpStatus.OK)
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                ldt.getEmail(), ldt.getPassword())
+        );
+        User loginUser = ussr.getByEmail(ldt.getEmail());
+        CustomUserDetails userPrincipal = new CustomUserDetails(loginUser);
+        JwtResponse jw=new JwtResponse(loginUser,jwt.generateToken(userPrincipal));
+        return new ResponseEntity<>(jw, HttpStatus.OK);
     }
-
+    @GetMapping("/{userId}/posts")
+    public ResponseEntity<?> getUserPosts(@PathVariable("userId") Long userId,
+                                          @RequestParam("page") Integer page,
+                                          @RequestParam("size") Integer size) {
+        page = page < 0 ? 0 : page-1;
+        size = size <= 0 ? 5 : size;
+        User targetUser = ussr.getById(userId);
+        List<PostResponse> userPosts = psr.getPostsByUserPaginate(targetUser, page, size);
+        return new ResponseEntity<>(userPosts, HttpStatus.OK);
+    }
     @GetMapping("/verify/{token}")
     public ResponseEntity<?> verifyEmail(@PathVariable("token") String token) {
         ussr.verifyEmail(token);
@@ -124,9 +154,4 @@ public class UserController {
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 
-    @PostMapping("/account/delete")
-    public ResponseEntity<?> deleteUserAccount() {
-        ussr.deleteUserAccount();
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }

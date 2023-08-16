@@ -7,6 +7,7 @@ import com.picgram.model.EmailVerification;
 import com.picgram.model.Post;
 import com.picgram.model.User;
 import com.picgram.repository.EmailServiceRepository;
+import com.picgram.repository.PostRepository;
 import com.picgram.repository.UserRepository;
 import com.picgram.response.UserResponse;
 import com.picgram.security.CustomUserDetailsService;
@@ -54,6 +55,8 @@ public class UserServiceImpl implements UserService {
     private JwtHelper jwtHelper;
     @Autowired
     private AuthenticationManager manager;
+    @Autowired
+    private PostRepository prp;
 
     public User getById(long uId) {
         return urp.findById(uId).orElseThrow(() -> new UserNotFoundException("User Not Found With Given ID"));
@@ -117,23 +120,6 @@ public class UserServiceImpl implements UserService {
             erp.deleteById(token);
         } catch (Exception e) {
 
-        }
-    }
-
-
-    @Override
-    public void deleteUserAccount() {
-        User authUser = getAuthenticatedUser();
-        String profilePhoto = authUser.getProfilePhoto();
-        // delete user profile picture from filesystem if exists
-        if (profilePhoto != null && profilePhoto.length() > 0) {
-            Path path = Paths.get(profilePhoto);
-            try {
-                urp.delete(authUser);
-                Files.deleteIfExists(path);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 

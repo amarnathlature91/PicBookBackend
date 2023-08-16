@@ -39,7 +39,7 @@ public class Post {
 
     @JsonIgnore
     @OneToMany(mappedBy = "post" ,cascade= CascadeType.ALL,orphanRemoval = true)
-    private List<Comments> comments=new ArrayList<>();
+    private List<Comment> comments=new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany

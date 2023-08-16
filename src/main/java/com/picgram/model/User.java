@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.action.internal.OrphanRemovalAction;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -53,22 +54,25 @@ public class User {
     private Date dateLastModified;
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "follow_users",
-            joinColumns = @JoinColumn(name = "followed_id"),
-            inverseJoinColumns = @JoinColumn(name = "follower_id")
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "followed_id")
     )
     private List<User> followerUsers = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "followerUsers")
+    @ManyToMany(mappedBy = "followerUsers",cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<User> followingUsers = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "creator", cascade = CascadeType.REMOVE)
     private List<Post> postList;
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "likeList")
+    private List<Post> likedPosts = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
